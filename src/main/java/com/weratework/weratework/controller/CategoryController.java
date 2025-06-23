@@ -28,4 +28,11 @@ public class CategoryController {
         return categoryRepository.save(category);
     }
 
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable int id) {
+        categoryRepository.deleteById(id);
+    }
+
+
+
 }
