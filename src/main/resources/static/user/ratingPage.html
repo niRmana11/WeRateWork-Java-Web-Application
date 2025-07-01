@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Submit Rating</title>
+    <style>
+        body {
+            background-color: #212121;
+            color: white;
+            font-family: sans-serif;
+            padding: 24px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .container {
+            padding: 24px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        #categoryGrid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .card {
+            width: 250px;
+            height: 300px;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: 0.3s ease;
+            text-align: center;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: black;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .rate-btn,
+        .submit-btn {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 14px;
+        }
+
+        .rate-btn:hover {
+            background-color: #2563eb;
+        }
+
+        .submit-btn {
+            background-color: #22c55e;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background-color: #16a34a;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .form-header h3 {
+            font-size: 18px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-btn:hover {
+            color: #e63946;
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            font-size: 24px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .rating-stars span {
+            transition: transform 0.2s;
+        }
+
+        .rating-stars span:hover {
+            transform: scale(1.2);
+        }
+
+        .text-green {
+            color: #16a34a;
+            font-size: 12px;
+        }
+
+        .text-red {
+            color: #dc2626;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Rate Your Experience</h2>
+    <div id="categoryGrid"></div>
+</div>
+
+<script>
+    const gradientColors = [
+        "linear-gradient(to bottom right, #1e3c72, #2a5298)",
+        "linear-gradient(to bottom right, #232526, #414345)",
+        "linear-gradient(to bottom right, #0f2027, #203a43, #2c5364)",
+        "linear-gradient(to bottom right, #434343, #000000)",
+        "linear-gradient(to bottom right, #141e30, #243b55)",
+        "linear-gradient(to bottom right, #3e5151, #decba4)",
+        "linear-gradient(to bottom right, #485563, #29323c)",
+        "linear-gradient(to bottom right, #2c3e50, #4ca1af)"
+    ];
+
+    let activeCard = null;
+    let activeCategory = null;
+    const selectedRatings = {};
+
+    function loadCategoryCards() {
+        fetch("/categories")
+            .then(res => res.json())
+            .then(data => {
+                const grid = document.getElementById("categoryGrid");
+                grid.innerHTML = "";
+                data.forEach((category, index) => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    const bg = gradientColors[index % gradientColors.length];
+                    card.style.background = bg;
+
+                    card.innerHTML = `
+            <h3>${category.name}</h3>
+            <button onclick="showInlineForm(${category.id}, '${category.name}')" class="rate-btn">Rate</button>
+          `;
+                    grid.appendChild(card);
+                });
+            });
+    }
+
+    window.onload = loadCategoryCards;
+
+    function showInlineForm(id, name) {
+        if (activeCard && activeCategory && activeCategory.id !== id) {
+            cancelInlineForm();
+        }
+
+        const card = event.target.closest(".card");
+        activeCard = card;
+        activeCategory = { id, name };
+
+        card.innerHTML = `
+      <div class="form-header">
+        <h3>${name}</h3>
+        <button onclick="cancelInlineForm()" class="close-btn" title="Close">&#10005;</button>
+      </div>
+      <select id="roleSelect${id}"></select>
+      <div id="ratingStars${id}" class="rating-stars"></div>
+      <textarea id="comment${id}" rows="2" placeholder="Write comment..."></textarea>
+      <button onclick="submitInlineRating(${id})" class="submit-btn">Submit</button>
+      <p id="msg${id}"></p>
+    `;
+
+        loadRolesToDropdown(`roleSelect${id}`);
+        renderStars(`ratingStars${id}`, id, 0);
+    }
+
+    function cancelInlineForm() {
+        if (!activeCard || !activeCategory) return;
+
+        const { id, name } = activeCategory;
+        activeCard.innerHTML = `
+      <h3>${name}</h3>
+      <button onclick="showInlineForm(${id}, '${name}')" class="rate-btn">Rate</button>
+    `;
+        activeCard = null;
+        activeCategory = null;
+    }
+
+    function loadRolesToDropdown(selectId) {
+        fetch("/roles")
+            .then(res => res.json())
+            .then(data => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = "";
+                data.forEach(role => {
+                    const opt = document.createElement("option");
+                    opt.value = role.id;
+                    opt.textContent = role.role || "Unnamed";
+                    select.appendChild(opt);
+                });
+            });
+    }
+
+    function renderStars(containerId, categoryId, selected = 0) {
+        selectedRatings[categoryId] = selected;
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement("span");
+            star.textContent = i <= selected ? "★" : "☆";
+            star.style.color = i <= selected ? "#000000" : "#191c1c";
+            star.onclick = () => renderStars(containerId, categoryId, i);
+            container.appendChild(star);
+        }
+    }
+
+    function submitInlineRating(categoryId) {
+        const roleId = document.getElementById(`roleSelect${categoryId}`).value;
+        const comment = document.getElementById(`comment${categoryId}`).value;
+        const score = selectedRatings[categoryId] || 0;
+
+        if (!score) return alert("Please select a rating");
+
+        const payload = {
+            category: { id: parseInt(categoryId) },
+            role: { id: parseInt(roleId) },
+            comment,
+            score
+        };
+
+        fetch("/ratings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to submit");
+                return res.json();
+            })
+            .then(() => {
+                const msg = document.getElementById(`msg${categoryId}`);
+                msg.textContent = "✅ Submitted!";
+                msg.className = "text-green";
+                setTimeout(loadCategoryCards, 1500);
+            })
+            .catch(err => {
+                const msg = document.getElementById(`msg${categoryId}`);
+                msg.textContent = "❌ " + err.message;
+                msg.className = "text-red";
+            });
+    }
+</script>
+</body>
+</html>

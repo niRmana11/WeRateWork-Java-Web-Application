@@ -17,6 +17,10 @@ public class Rating {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
     @Column(nullable = false)
     private int score;
 
@@ -36,6 +40,14 @@ public class Rating {
 
     public Category getCategory() {
         return category;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public void setCategory(Category category) {

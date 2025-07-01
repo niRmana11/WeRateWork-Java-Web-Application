@@ -14,6 +14,7 @@ public class Category {
 @Column(nullable = false, unique = true)
     private String name;
 
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings;
 
@@ -33,4 +34,6 @@ public class Category {
     public void setName(String name) {
         this.name = name;
     }
+
+
 }
