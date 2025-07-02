@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Management</title>
+  <style>
+    body {
+      background-color: #f3f4f6;
+      color: #333;
+      font-family: Arial, sans-serif;
+      padding: 24px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 768px;
+      margin: 0 auto 40px;
+      background-color: #fff;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    form {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #3b82f6;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    thead {
+      background-color: #e5e7eb;
+    }
+
+    .text-sm {
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .text-red {
+      color: #dc2626;
+    }
+
+    .text-green {
+      color: #16a34a;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #dc2626;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .delete-btn:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Manage Categories</h1>
+
+  <form id="categoryForm">
+    <input type="text" id="categoryName" placeholder="New Category Name" required />
+    <button type="submit">Add Category</button>
+  </form>
+  <p id="categoryFormMessage" class="text-sm"></p>
+
+  <table>
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Category</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="categoryTable"></tbody>
+  </table>
+</div>
+
+<div class="container">
+  <h1>Manage Roles</h1>
+
+  <form id="roleForm">
+    <input type="text" id="roleName" placeholder="New Role Name" required />
+    <button type="submit">Add Role</button>
+  </form>
+  <p id="roleFormMessage" class="text-sm"></p>
+
+  <table>
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="roleTable"></tbody>
+  </table>
+</div>
+
+<script>
+  const catForm = document.getElementById("categoryForm");
+  const catNameInput = document.getElementById("categoryName");
+  const catTable = document.getElementById("categoryTable");
+  const catMsg = document.getElementById("categoryFormMessage");
+
+  const roleForm = document.getElementById("roleForm");
+  const roleNameInput = document.getElementById("roleName");
+  const roleTable = document.getElementById("roleTable");
+  const roleMsg = document.getElementById("roleFormMessage");
+
+  function loadCategories() {
+    fetch("/categories")
+            .then(res => res.json())
+            .then(data => {
+              catTable.innerHTML = "";
+              if (!Array.isArray(data) || data.length === 0) {
+                catTable.innerHTML = "<tr><td colspan='3'>No categories found</td></tr>";
+                return;
+              }
+              data.forEach((cat, index) => {
+                const row = `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${cat.name}</td>
+              <td>
+
+                <button onclick="deleteCategory(${cat.id})" class="delete-btn">Delete</button>
+              </td>
+            </tr>`;
+                catTable.innerHTML += row;
+              });
+            })
+            .catch(err => {
+              catTable.innerHTML = "<tr><td colspan='3' class='text-red'>Failed to load categories</td></tr>";
+            });
+  }
+
+  catForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    fetch("/categories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: catNameInput.value })
+    })
+            .then(res => {
+              if (!res.ok) throw new Error("Failed to add");
+              return res.json();
+            })
+            .then(data => {
+              catMsg.textContent = `✅ Added: ${data.name}`;
+              catMsg.className = "text-sm text-green";
+              catNameInput.value = "";
+              loadCategories();
+              setTimeout(() => {
+                catMsg.textContent = "";
+                catMsg.className = "";
+              }, 5000);
+            })
+            .catch(err => {
+              catMsg.textContent = `❌ ${err.message}`;
+              catMsg.className = "text-sm text-red";
+            });
+  });
+
+  function deleteCategory(id) {
+    if (!confirm("Are you sure to delete this category?")) return;
+    fetch(`/categories/${id}`, { method: "DELETE" })
+            .then(res => {
+              if (!res.ok) throw new Error("Delete failed");
+              loadCategories();
+            })
+            .catch(err => alert("Error: " + err.message));
+  }
+
+  function loadRoles() {
+    fetch("/roles")
+            .then(res => res.json())
+            .then(data => {
+              roleTable.innerHTML = "";
+              if (!Array.isArray(data) || data.length === 0) {
+                roleTable.innerHTML = "<tr><td colspan='3'>No roles found</td></tr>";
+                return;
+              }
+              data.forEach((role, index) => {
+                const row = `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${role.role}</td>
+              <td>
+                <button onclick="deleteRole(${role.id})" class="delete-btn">Delete</button>
+              </td>
+            </tr>`;
+                roleTable.innerHTML += row;
+              });
+            })
+            .catch(err => {
+              roleTable.innerHTML = "<tr><td colspan='3' class='text-red'>Failed to load roles</td></tr>";
+            });
+  }
+
+  roleForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    fetch("/roles", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: roleNameInput.value })
+    })
+            .then(res => {
+              if (!res.ok) throw new Error("Failed to add");
+              return res.json();
+            })
+            .then(data => {
+              roleMsg.textContent = `✅ Added: ${data.role}`;
+              roleMsg.className = "text-sm text-green";
+              roleNameInput.value = "";
+              loadRoles();
+              setTimeout(() => {
+                roleMsg.textContent = "";
+                roleMsg.className = "";
+              }, 5000);
+            })
+            .catch(err => {
+              roleMsg.textContent = `❌ ${err.message}`;
+              roleMsg.className = "text-sm text-red";
+            });
+  });
+
+  function deleteRole(id) {
+    if (!confirm("Are you sure to delete this role?")) return;
+    fetch(`/roles/${id}`, { method: "DELETE" })
+            .then(res => {
+              if (!res.ok) throw new Error("Delete failed");
+              loadRoles();
+            })
+            .catch(err => alert("Error: " + err.message));
+  }
+
+  window.onload = function () {
+    loadCategories();
+    loadRoles();
+  };
+</script>
+</body>
+</html>
