@@ -2,6 +2,7 @@ package com.weratework.weratework.repository;
 
 import com.weratework.weratework.dto.CategoryRatingSummary;
 import com.weratework.weratework.model.Rating;
+import com.weratework.weratework.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +23,6 @@ public interface RatingRepository extends JpaRepository<Rating, Integer> {
     );
 
     List<Rating> findByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
+
+    List<Rating> findById(User user);
 }
