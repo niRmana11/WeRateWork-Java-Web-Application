@@ -33,7 +33,13 @@ public class CategoryController {
         categoryRepository.deleteById(id);
     }
 
-
+    @PutMapping("/{id}")
+    public Category updateCategory(@PathVariable int id, @RequestBody Category updated) {
+        Category cat = categoryRepository.findById(id).orElseThrow();
+        cat.setName(updated.getName());
+        cat.setDescription(updated.getDescription());
+        return categoryRepository.save(cat);
+    }
 
 
 

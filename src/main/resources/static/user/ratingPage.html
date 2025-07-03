@@ -157,14 +157,12 @@
 
 <script>
     const gradientColors = [
-        "linear-gradient(to bottom right, #1e3c72, #2a5298)",
-        "linear-gradient(to bottom right, #232526, #414345)",
-        "linear-gradient(to bottom right, #0f2027, #203a43, #2c5364)",
-        "linear-gradient(to bottom right, #434343, #000000)",
-        "linear-gradient(to bottom right, #141e30, #243b55)",
-        "linear-gradient(to bottom right, #3e5151, #decba4)",
-        "linear-gradient(to bottom right, #485563, #29323c)",
-        "linear-gradient(to bottom right, #2c3e50, #4ca1af)"
+        "linear-gradient(to right bottom, #f43f5e, #f97316, #fde68a)",
+        "linear-gradient(to right bottom, #3b82f6, #6366f1, #8b5cf6)",
+        "linear-gradient(to right bottom, #6ee7b7, #34d399, #10b981)",
+        "linear-gradient(to right bottom, #a78bfa, #c084fc, #f472b6)",
+        "linear-gradient(to right bottom, #facc15, #f59e0b, #ef4444)"
+
     ];
 
     let activeCard = null;
@@ -185,7 +183,8 @@
 
                     card.innerHTML = `
             <h3>${category.name}</h3>
-            <button onclick="showInlineForm(${category.id}, '${category.name}')" class="rate-btn">Rate</button>
+            <h5>${category.description}</h5>
+            <button onclick="showInlineForm(${category.id}, '${category.name}', '${category.description}')" class="rate-btn">Rate</button>
           `;
                     grid.appendChild(card);
                 });
@@ -194,18 +193,19 @@
 
     window.onload = loadCategoryCards;
 
-    function showInlineForm(id, name) {
+    function showInlineForm(id, name, description) {
         if (activeCard && activeCategory && activeCategory.id !== id) {
             cancelInlineForm();
         }
 
         const card = event.target.closest(".card");
         activeCard = card;
-        activeCategory = { id, name };
+        activeCategory = { id, name, description };
 
         card.innerHTML = `
       <div class="form-header">
         <h3>${name}</h3>
+
         <button onclick="cancelInlineForm()" class="close-btn" title="Close">&#10005;</button>
       </div>
       <select id="roleSelect${id}"></select>
@@ -222,10 +222,11 @@
     function cancelInlineForm() {
         if (!activeCard || !activeCategory) return;
 
-        const { id, name } = activeCategory;
+        const { id, name, description } = activeCategory;
         activeCard.innerHTML = `
       <h3>${name}</h3>
-      <button onclick="showInlineForm(${id}, '${name}')" class="rate-btn">Rate</button>
+      <h5>${description}</h5>
+      <button onclick="showInlineForm(${id}, '${name}' '${description}')" class="rate-btn">Rate</button>
     `;
         activeCard = null;
         activeCategory = null;

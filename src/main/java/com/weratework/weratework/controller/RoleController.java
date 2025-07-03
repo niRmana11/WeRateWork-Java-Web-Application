@@ -33,4 +33,11 @@ public class RoleController {
         roleRepository.deleteById(id);
     }
 
+    @PutMapping("/{id}")
+    public Role updateRole(@PathVariable int id, @RequestBody Role updated) {
+        Role role = roleRepository.findById(id).orElseThrow();
+        role.setRole(updated.getRole());
+        return roleRepository.save(role);
+    }
+
 }
