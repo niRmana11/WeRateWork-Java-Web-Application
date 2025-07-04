@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/profile")
 public class ProfileController {
 
     private final RatingRepository ratingRepository;
-    private final UserRepository userRepository;
+
 
     public ProfileController(RatingRepository ratingRepository, UserRepository userRepository) {
         this.ratingRepository = ratingRepository;
-        this.userRepository = userRepository;
+
     }
 
     @GetMapping("/ratings")
@@ -33,9 +33,10 @@ public class ProfileController {
         }
 
         User user = (User) userObj;
-        Optional<Rating> ratings = ratingRepository.findById(user.getId());
+        List<Rating> ratings = ratingRepository.findByUser(user);
 
         return ResponseEntity.ok(ratings);
     }
-    
+
+
 }

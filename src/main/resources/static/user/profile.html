@@ -230,7 +230,7 @@
                 fetchUserRatings();
             })
             .catch(() => {
-                window.location.href = "/login.html";
+                window.location.href = "/user/login.html";
             });
     }
 
@@ -267,8 +267,9 @@
 
     function logout() {
         fetch("/auth/logout", { method: "POST" })
-            .then(() => window.location.href = "/login.html");
+            .then(() => window.location.href = "/user/login.html");
     }
+
 
     function fetchUserRatings() {
         fetch("/profile/ratings")

@@ -9,9 +9,12 @@ import com.weratework.weratework.repository.RatingRepository;
 import com.weratework.weratework.repository.RoleRepository;
 import com.weratework.weratework.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/ratings")
@@ -59,7 +62,32 @@ public class RatingController {
     }
 
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateRating(@PathVariable int id, @RequestBody Rating updatedRating) {
+        Optional<Rating> optionalRating = ratingRepository.findById(id);
+        if (optionalRating.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rating not found");
+        }
 
+        Rating existingRating = optionalRating.get();
+        existingRating.setScore(updatedRating.getScore());
+        existingRating.setComment(updatedRating.getComment());
+
+        ratingRepository.save(existingRating);
+        return ResponseEntity.ok(existingRating);
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteRating(@PathVariable int id) {
+        Optional<Rating> optionalRating = ratingRepository.findById(id);
+        if (optionalRating.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rating not found");
+        }
+
+        ratingRepository.deleteById(id);
+        return ResponseEntity.ok().body("Rating deleted successfully");
+    }
 
 
 
