@@ -1,17 +1,16 @@
 package com.weratework.weratework.controller;
 
-import com.weratework.weratework.model.User;
 import com.weratework.weratework.model.Rating;
+import com.weratework.weratework.model.User;
 import com.weratework.weratework.repository.RatingRepository;
 import com.weratework.weratework.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -27,18 +26,15 @@ public class ProfileController {
     }
 
     @GetMapping("/ratings")
-    public ResponseEntity<List<Rating>> getUserRatings(Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<?> getUserRatings(HttpSession session) {
+        Object userObj = session.getAttribute("user");
+        if (userObj == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
         }
 
-        // principal.getName() returns username of logged-in user
-        Optional<User> user = userRepository.findByUsername(principal.getName());
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        User user = (User) userObj;
+        Optional<Rating> ratings = ratingRepository.findById(user.getId());
 
-        List<Rating> ratings = ratingRepository.findById(user.get());
         return ResponseEntity.ok(ratings);
     }
     

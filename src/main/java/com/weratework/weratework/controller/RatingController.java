@@ -3,9 +3,12 @@ package com.weratework.weratework.controller;
 import com.weratework.weratework.model.Category;
 import com.weratework.weratework.model.Rating;
 import com.weratework.weratework.model.Role;
+import com.weratework.weratework.model.User;
 import com.weratework.weratework.repository.CategoryRepository;
 import com.weratework.weratework.repository.RatingRepository;
 import com.weratework.weratework.repository.RoleRepository;
+import com.weratework.weratework.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,11 +20,13 @@ public class RatingController {
     private final RatingRepository ratingRepository;
     private final CategoryRepository categoryRepository;
     private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
-   public RatingController(RatingRepository ratingRepository, CategoryRepository categoryRepository, RoleRepository roleRepository) {
+   public RatingController(RatingRepository ratingRepository, CategoryRepository categoryRepository, RoleRepository roleRepository, UserRepository userRepository) {
        this.ratingRepository = ratingRepository;
        this.categoryRepository = categoryRepository;
        this.roleRepository = roleRepository;
+       this.userRepository = userRepository;
    }
 
    @GetMapping
@@ -30,7 +35,10 @@ public class RatingController {
    }
 
     @PostMapping
-    public Rating createRating(@RequestBody Rating rating) {
+    public Rating createRating(@RequestBody Rating rating, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) throw new RuntimeException("Unauthorized");
+
         if (rating.getCategory() == null || rating.getCategory().getId() == 0)
             throw new RuntimeException("Category is missing or invalid");
 
@@ -45,9 +53,11 @@ public class RatingController {
 
         rating.setCategory(category);
         rating.setRole(role);
+        rating.setUser(user); // ✅ Set user from session
 
         return ratingRepository.save(rating);
     }
+
 
 
 

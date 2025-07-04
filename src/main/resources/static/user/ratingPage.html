@@ -147,10 +147,31 @@
             color: #dc2626;
             font-size: 12px;
         }
+
+        .profile-btn {
+            background: linear-gradient(to right, #3b82f6, #10b981);
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s ease, transform 0.2s ease;
+            display: inline-block;
+        }
+
+        .profile-btn:hover {
+            background: linear-gradient(to right, #2563eb, #059669);
+            transform: scale(1.05);
+        }
+
     </style>
 </head>
 <body>
 <div class="container">
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="profile.html" class="profile-btn">👤 Profile</a>
+    </div>
+
     <h2>Rate Your Experience</h2>
     <div id="categoryGrid"></div>
 </div>
