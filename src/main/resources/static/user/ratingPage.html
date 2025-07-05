@@ -102,8 +102,8 @@
         .submit-btn {
             background: linear-gradient(to right, #10b981, #059669);
             color: white;
-            width: 100%;
-            margin-top: 10px;
+            width: 90%;
+            margin-top: 20px;
         }
 
         .submit-btn:hover {
@@ -113,14 +113,20 @@
         .form-header {
             display: flex;
             justify-content: space-between;
-            width: 100%;
             align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .form-header h3{
+            margin: 0;
+            flex: 1;
         }
 
         .close-btn {
             background: none;
             border: none;
-            color: #9ca3af;
+            color: #0f0f0f;
             font-size: 20px;
             cursor: pointer;
             transition: color 0.2s ease;
@@ -131,7 +137,7 @@
         }
 
         textarea {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             border-radius: 8px;
             font-size: 14px;
@@ -140,22 +146,7 @@
             border: none;
         }
 
-        .rating-stars {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            font-size: 24px;
-            cursor: pointer;
-            margin: 10px 0;
-        }
 
-        .rating-stars span {
-            transition: transform 0.2s ease;
-        }
-
-        .rating-stars span:hover {
-            transform: scale(1.2);
-        }
 
         .text-green {
             color: #22c55e;
@@ -203,7 +194,29 @@
 </div>
 
 <script>
-    const gradientColors = [
+
+
+        // Check if user is logged in
+        fetch("/auth/me")
+        .then(res => {
+        if (!res.ok) {
+        // Redirect to login if not authenticated
+        window.location.href = "login.html";
+    }
+        return res.json();
+    })
+        .then(user => {
+        console.log("Logged in as:", user.username); // Optional
+    })
+        .catch(err => {
+        // In case of network error or server issue
+        console.error("Error checking auth:", err);
+        window.location.href = "login.html";
+    });
+
+
+
+const gradientColors = [
         "linear-gradient(to right bottom, #ff5f6d, #ffc371)",
         "linear-gradient(to right bottom, #4facfe, #00f2fe)",
         "linear-gradient(to right bottom, #43e97b, #38f9d7)",
@@ -253,7 +266,7 @@
         <button onclick="cancelInlineForm()" class="close-btn" title="Close">&#10005;</button>
       </div>
       <div id="ratingStars${id}" class="rating-stars"></div>
-      <textarea id="comment${id}" rows="2" placeholder="Write a comment..."></textarea>
+      <textarea id="comment${id}" rows="3" placeholder="Write a comment..."></textarea>
       <button onclick="submitInlineRating(${id})" class="submit-btn">Submit</button>
       <p id="msg${id}"></p>
     `;
@@ -274,20 +287,43 @@
         activeCategory = null;
     }
 
-    function renderStars(containerId, categoryId, selected = 0) {
-        selectedRatings[categoryId] = selected;
-        const container = document.getElementById(containerId);
-        container.innerHTML = "";
-        for (let i = 1; i <= 5; i++) {
-            const star = document.createElement("span");
-            star.textContent = i <= selected ? "★" : "☆";
-            star.style.color = i <= selected ? "#000000" : "#4b5563";
-            star.onclick = () => renderStars(containerId, categoryId, i);
-            container.appendChild(star);
-        }
-    }
+        function renderStars(containerId, categoryId, selected = 0) {
+            selectedRatings[categoryId] = selected;
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
 
-    function submitInlineRating(categoryId) {
+            const emojis = ["😡", "😕", "😐", "🙂", "🤩"];
+            const labels = ["Very Bad", "Bad", "Okay", "Good", "Excellent"];
+
+            const emojiContainer = document.createElement("div");
+            emojiContainer.style.display = "flex";
+            emojiContainer.style.justifyContent = "center";
+            emojiContainer.style.gap = "12px";
+            emojiContainer.style.fontSize = "28px";
+            emojiContainer.style.margin = "14px 0";
+
+            emojis.forEach((emoji, index) => {
+                const emojiSpan = document.createElement("span");
+                emojiSpan.textContent = emoji;
+                emojiSpan.title = `${index + 1} - ${labels[index]}`;
+                emojiSpan.style.cursor = "pointer";
+                emojiSpan.style.transition = "transform 0.2s ease";
+                emojiSpan.style.opacity = selected >= index + 1 ? "1" : "0.6";
+
+                emojiSpan.onclick = () => renderStars(containerId, categoryId, index + 1);
+                emojiSpan.onmouseenter = () => emojiSpan.style.transform = "scale(1.3)";
+                emojiSpan.onmouseleave = () => emojiSpan.style.transform = "scale(1)";
+
+                emojiContainer.appendChild(emojiSpan);
+            });
+
+            container.appendChild(emojiContainer);
+        }
+
+
+
+
+        function submitInlineRating(categoryId) {
         const comment = document.getElementById(`comment${categoryId}`).value;
         const score = selectedRatings[categoryId] || 0;
 

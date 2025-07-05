@@ -85,17 +85,25 @@
             margin-top: 24px;
         }
 
-        .edit-form input {
+        .edit-form input,
+        .edit-form textarea {
             margin-bottom: 12px;
             padding: 10px;
             border-radius: 6px;
             border: none;
             font-size: 14px;
+            resize: vertical;
         }
 
         .save-btn {
             background: linear-gradient(to right, #10b981, #059669);
             color: white;
+        }
+
+        .cancel-btn {
+            background: #6b7280;
+            color: white;
+            margin-left: 8px;
         }
 
         .message {
@@ -123,6 +131,7 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 4px 14px rgba(59, 130, 246, 0.2);
+            position: relative;
         }
 
         .rating-header {
@@ -142,9 +151,8 @@
             color: #9ca3af;
         }
 
-        .stars {
-            color: #facc15;
-            font-size: 20px;
+        .emoji-display {
+            font-size: 28px;
         }
 
         .comment {
@@ -172,6 +180,51 @@
 
         .back-link a:hover {
             color: #60a5fa;
+        }
+
+        /* Emoji selector container */
+        .emoji-selector {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 12px 0;
+            font-size: 32px;
+            user-select: none;
+        }
+
+        .emoji-selector span {
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            opacity: 0.5;
+        }
+
+        .emoji-selector span.selected {
+            opacity: 1;
+            transform: scale(1.4);
+        }
+
+        .emoji-selector span:hover {
+            transform: scale(1.4);
+            opacity: 1;
+        }
+
+        /* Edit form inside rating card */
+        .edit-rating-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .edit-rating-comment {
+            resize: vertical;
+            min-height: 60px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .edit-rating-buttons {
+            margin-top: 8px;
+            display: flex;
+            justify-content: flex-end;
         }
     </style>
 </head>
@@ -216,6 +269,12 @@
     const msgEl = document.getElementById("msg");
     const editForm = document.getElementById("editForm");
     const ratingsContainer = document.getElementById("ratingsContainer");
+
+    // Emoji map for score to emoji
+    const emojiMap = ["", "😡", "😕", "😐", "🙂", "🤩"];
+
+    // Store editing state to track which rating is currently being edited
+    let editingRatingId = null;
 
     function loadUserDetails() {
         fetch("/auth/me")
@@ -270,7 +329,7 @@
             .then(() => window.location.href = "/user/login.html");
     }
 
-
+    // Render user ratings, with edit form support
     function fetchUserRatings() {
         fetch("/profile/ratings")
             .then(res => res.json())
@@ -282,47 +341,139 @@
                 }
 
                 data.forEach(rating => {
-                    const stars = '★'.repeat(rating.score) + '☆'.repeat(5 - rating.score);
                     const card = document.createElement("div");
                     card.className = "rating-card";
-                    card.innerHTML = `
-            <div class="rating-header">
-              <div>
-                <div class="category">${rating.category.name}</div>
-                <div class="role">${rating.role.role}</div>
-              </div>
-              <div class="stars">${stars}</div>
-            </div>
-            <div class="comment">${rating.comment || "No comment"}</div>
-            <div class="rating-actions">
-              <button class="btn edit-btn" onclick="editRating(${rating.id})">Edit</button>
-              <button class="btn logout-btn" onclick="deleteRating(${rating.id})">Delete</button>
-            </div>
-          `;
+                    card.dataset.ratingId = rating.id;
+
+                    // If this rating is being edited, show edit form, else show display
+                    if (editingRatingId === rating.id) {
+                        card.innerHTML = getEditFormHtml(rating);
+                        attachEditFormHandlers(card, rating);
+                    } else {
+                        card.innerHTML = getDisplayHtml(rating);
+                        // Add event listener for edit button
+                        card.querySelector(".edit-btn").onclick = () => {
+                            editingRatingId = rating.id;
+                            fetchUserRatings();
+                        };
+                        // Add event listener for delete button
+                        card.querySelector(".logout-btn").onclick = () => deleteRating(rating.id);
+                    }
+
                     ratingsContainer.appendChild(card);
                 });
             });
     }
 
-    function editRating(id) {
-        const newScore = prompt("Enter new rating (1-5):");
-        const newComment = prompt("Enter updated comment:");
+    function getDisplayHtml(rating) {
+        const emoji = emojiMap[rating.score];
+        return `
+            <div class="rating-header">
+              <div>
+                <div class="category">${rating.category.name}</div>
+                <div class="role">${rating.role.role}</div>
+              </div>
+              <div class="emoji-display">${emoji}</div>
+            </div>
+            <div class="comment">${rating.comment || "No comment"}</div>
+            <div class="rating-actions">
+              <button class="btn edit-btn">Edit</button>
+              <button class="btn logout-btn">Delete</button>
+            </div>
+        `;
+    }
 
-        if (!newScore || isNaN(newScore) || newScore < 1 || newScore > 5) {
-            alert("Invalid rating.");
-            return;
+    function getEditFormHtml(rating) {
+        const score = rating.score || 0;
+        const comment = rating.comment || "";
+        return `
+            <div class="rating-header">
+              <div>
+                <div class="category">${rating.category.name}</div>
+                <div class="role">${rating.role.role}</div>
+              </div>
+            </div>
+            <form class="edit-rating-form">
+              <div class="emoji-selector" role="radiogroup" aria-label="Rating">
+                ${[1,2,3,4,5].map(i => `
+                  <span role="radio" tabindex="0" aria-checked="${score === i}" data-value="${i}" class="${score === i ? 'selected' : ''}" aria-label="${emojiMap[i]}">${emojiMap[i]}</span>
+                `).join("")}
+              </div>
+              <textarea class="edit-rating-comment" placeholder="Update your comment...">${comment}</textarea>
+              <div class="edit-rating-buttons">
+                <button type="submit" class="btn save-btn">Save</button>
+                <button type="button" class="btn cancel-btn">Cancel</button>
+              </div>
+            </form>
+        `;
+    }
+
+    function attachEditFormHandlers(card, rating) {
+        const form = card.querySelector(".edit-rating-form");
+        const emojis = Array.from(form.querySelectorAll(".emoji-selector span"));
+        const textarea = form.querySelector(".edit-rating-comment");
+        let selectedScore = rating.score;
+
+        // Emoji click handlers
+        emojis.forEach(span => {
+            span.addEventListener("click", () => {
+                selectedScore = parseInt(span.dataset.value);
+                updateEmojiSelection();
+            });
+            // Keyboard accessible selection
+            span.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    selectedScore = parseInt(span.dataset.value);
+                    updateEmojiSelection();
+                }
+            });
+        });
+
+        function updateEmojiSelection() {
+            emojis.forEach(s => {
+                if (parseInt(s.dataset.value) === selectedScore) {
+                    s.classList.add("selected");
+                    s.setAttribute("aria-checked", "true");
+                    s.tabIndex = 0;
+                } else {
+                    s.classList.remove("selected");
+                    s.setAttribute("aria-checked", "false");
+                    s.tabIndex = -1;
+                }
+            });
         }
 
-        fetch(`/ratings/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ score: parseInt(newScore), comment: newComment || "" })
-        })
-            .then(res => {
-                if (!res.ok) throw new Error("Update failed");
-                fetchUserRatings();
+        // Initial selection highlight
+        updateEmojiSelection();
+
+        // Save handler
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (!selectedScore || selectedScore < 1 || selectedScore > 5) {
+                alert("Please select a rating.");
+                return;
+            }
+            const newComment = textarea.value.trim();
+
+            fetch(`/ratings/${rating.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ score: selectedScore, comment: newComment })
             })
-            .catch(err => alert(err.message));
+                .then(res => {
+                    if (!res.ok) throw new Error("Update failed");
+                    editingRatingId = null;
+                    fetchUserRatings();
+                })
+                .catch(err => alert(err.message));
+        }, { once: true });
+
+        // Cancel handler
+        form.querySelector(".cancel-btn").onclick = () => {
+            editingRatingId = null;
+            fetchUserRatings();
+        };
     }
 
     function deleteRating(id) {
