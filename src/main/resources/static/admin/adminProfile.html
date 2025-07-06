@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Profile - WeRateWork</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to bottom right, #0f0f0f, #1e1e1e);
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    .profile-card {
+      background-color: #1f1f1f;
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.2);
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto 40px;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 24px;
+      text-align: center;
+      background: linear-gradient(to right, #3b82f6, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .profile-item {
+      margin-bottom: 16px;
+      font-size: 16px;
+    }
+
+    .label {
+      color: #9ca3af;
+    }
+
+    .value {
+      font-weight: bold;
+      color: #f1f5f9;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+
+    .edit-btn {
+      background: linear-gradient(to right, #3b82f6, #60a5fa);
+      color: white;
+    }
+
+    .logout-btn {
+      background: linear-gradient(to right, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    .edit-form {
+      display: none;
+      flex-direction: column;
+      margin-top: 24px;
+    }
+
+    .edit-form input,
+    .edit-form textarea {
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      resize: vertical;
+    }
+
+    .save-btn {
+      background: linear-gradient(to right, #10b981, #059669);
+      color: white;
+    }
+
+    .cancel-btn {
+      background: #6b7280;
+      color: white;
+      margin-left: 8px;
+    }
+
+    .message {
+      font-size: 14px;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .text-green {
+      color: #22c55e;
+    }
+
+    .text-red {
+      color: #ef4444;
+    }
+
+
+
+
+
+
+
+    .back-link {
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .back-link a {
+      color: #3b82f6;
+      font-weight: bold;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .back-link a:hover {
+      color: #60a5fa;
+    }
+
+
+
+
+
+
+  </style>
+</head>
+<body>
+
+<div class="back-link">
+  <a href="dashboard.html">← Back to Dashboard</a>
+</div>
+
+<div class="profile-card">
+  <h2>User Profile</h2>
+
+  <div class="profile-item">
+    <div class="label">Username:</div>
+    <div id="username" class="value">Loading...</div>
+  </div>
+  <div class="profile-item">
+    <div class="label">Role:</div>
+    <div id="role" class="value">Loading...</div>
+  </div>
+
+  <div class="actions">
+    <button class="btn edit-btn" onclick="toggleEdit()">Edit Profile</button>
+    <button class="btn logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <form id="editForm" class="edit-form">
+    <input type="text" id="newUsername" placeholder="New Username" required />
+    <input type="password" id="newPassword" placeholder="New Password" required />
+    <button type="submit" class="btn save-btn">Save Changes</button>
+  </form>
+
+  <p id="msg" class="message"></p>
+</div>
+
+
+
+
+
+<script>
+  const usernameEl = document.getElementById("username");
+  const roleEl = document.getElementById("role");
+  const msgEl = document.getElementById("msg");
+  const editForm = document.getElementById("editForm");
+
+
+
+
+  function loadUserDetails() {
+    fetch("/auth/me", { credentials: "include" }) // include session cookie
+            .then(res => {
+              if (!res.ok) throw new Error("Not logged in");
+              return res.json();
+            })
+            .then(user => {
+              usernameEl.textContent = user.username;
+              roleEl.textContent = user.role.role;
+              document.getElementById("newUsername").value = user.username;
+
+            })
+            .catch(() => {
+              window.location.href = "../user/login.html";
+            });
+  }
+
+
+  function toggleEdit() {
+    editForm.style.display = editForm.style.display === "flex" ? "none" : "flex";
+    msgEl.textContent = "";
+  }
+
+  editForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const newUsername = document.getElementById("newUsername").value;
+    const newPassword = document.getElementById("newPassword").value;
+
+    fetch("/auth/update", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: newUsername, password: newPassword })
+    })
+            .then(res => {
+              if (!res.ok) throw new Error("Failed to update profile");
+              return res.json();
+            })
+            .then(() => {
+              msgEl.textContent = "✅ Profile updated successfully!";
+              msgEl.className = "message text-green";
+              loadUserDetails();
+              toggleEdit();
+            })
+            .catch(err => {
+              msgEl.textContent = "❌ " + err.message;
+              msgEl.className = "message text-red";
+            });
+  });
+
+  function logout() {
+    fetch("/auth/logout", { method: "POST" })
+            .then(() => window.location.href = "/user/login.html");
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  loadUserDetails();
+</script>
+
+</body>
+</html>

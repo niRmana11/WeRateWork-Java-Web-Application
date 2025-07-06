@@ -126,16 +126,48 @@
             width: 100%;
             height: 300px;
         }
+
+        .top-right {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .profile-btn {
+            background: linear-gradient(to right, #3b82f6, #10b981);
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s ease, transform 0.2s ease;
+            display: inline-block;
+        }
+
+        .profile-btn:hover {
+            background: linear-gradient(to right, #2563eb, #059669);
+            transform: scale(1.05);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="center">
-    <a href="adminManage.html" class="btn">Manage Categories</a>
+<div class="top-bar">
+    <a href="adminManage.html" class="btn">Manage</a>
+    <h1>Category Rating Summary</h1>
+    <a href="adminProfile.html" class="profile-btn">👤 Profile</a>
 </div>
 
+
 <div class="container">
-    <h1>Category Rating Summary</h1>
+
 
     <div class="filters">
         <select id="categoryFilter">
@@ -174,16 +206,37 @@
 </div>
 
 <script>
+
+
+
     let allRatings = [];
 
     window.onload = () => {
         loadCategories();
         loadRoles();
         loadRatings();
+        loadUserDetails();
+        checkAuth();
 
         document.getElementById("categoryFilter").onchange = filterRatings;
         document.getElementById("roleFilter").onchange = filterRatings;
     };
+
+
+    function checkAuth() {
+        fetch("/auth/me", { credentials: "include" })
+            .then(res => {
+                if (!res.ok) throw new Error("Not logged in");
+                return res.json();
+            })
+            .then(user => {
+                // Optional: display user name somewhere or store for later
+                console.log("Authenticated as:", user.username);
+            })
+            .catch(() => {
+                window.location.href = "../user/login.html";
+            });
+    }
 
     function loadCategories() {
         fetch("/categories")

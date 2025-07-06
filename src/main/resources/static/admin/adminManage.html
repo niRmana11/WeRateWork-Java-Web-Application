@@ -6,7 +6,7 @@
   <title>Admin Management</title>
   <style>
     body {
-      background-color: #111827;
+      background-color: #0f0f0f;
       color: #f3f4f6;
       font-family: 'Segoe UI', sans-serif;
       padding: 24px;
@@ -14,7 +14,7 @@
     }
 
     .container {
-      max-width: 768px;
+      max-width: 100%;
       margin: 0 auto 40px;
       background: linear-gradient(to right, #1f2937, #111827);
       padding: 24px;
@@ -137,9 +137,31 @@
     .modal button {
       margin-right: 8px;
     }
+
+    .back-btn {
+      display: inline-block;
+      background: linear-gradient(to right, #3b82f6, #10b981);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: linear-gradient(to right, #2563eb, #059669);
+      transform: scale(1.03);
+    }
+
   </style>
 </head>
 <body>
+
+<div style="text-align: center; margin-bottom: 24px;">
+  <a href="dashboard.html" class="back-btn">⬅ Back to Dashboard</a>
+</div>
+
 
 <!-- Category Section -->
 <div class="container">
