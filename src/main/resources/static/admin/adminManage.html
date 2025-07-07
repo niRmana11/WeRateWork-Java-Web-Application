@@ -255,6 +255,7 @@
     return text.trim().length >= min && text.trim().length <= max;
   }
 
+  // validate category form
   function validateCategoryForm() {
     const name = catNameInput.value.trim();
     const desc = categoryDesc.value.trim();
@@ -278,7 +279,7 @@
 
   }
 
-
+// validate role form
   function validateRoleForm() {
 
     const role = roleNameInput.value.trim();
@@ -302,6 +303,7 @@
     return text.replace(/'/g, "\\'");
   }
 
+  // load categories
   function loadCategories() {
     fetch("/categories")
             .then(res => res.json())
@@ -330,6 +332,7 @@
             });
   }
 
+  //load roles
   function loadRoles() {
     fetch("/roles")
             .then(res => res.json())
@@ -406,6 +409,7 @@
             });
   });
 
+  // delete category
   function deleteCategory(id) {
     if (!confirm("Delete this category?")) return;
     fetch(`/categories/${id}`, { method: "DELETE" })
@@ -416,6 +420,7 @@
             .catch(err => alert("Error: " + err.message));
   }
 
+  // delete role
   function deleteRole(id) {
     if (!confirm("Delete this role?")) return;
     fetch(`/roles/${id}`, { method: "DELETE" })

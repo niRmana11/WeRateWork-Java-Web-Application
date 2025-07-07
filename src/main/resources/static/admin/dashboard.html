@@ -208,15 +208,13 @@
 
 <script>
 
-
-
     let allRatings = [];
 
     window.onload = () => {
         loadCategories();
         loadRoles();
         loadRatings();
-        loadUserDetails();
+
         checkAuth();
 
         document.getElementById("categoryFilter").onchange = filterRatings;
@@ -371,17 +369,17 @@
         document.getElementById("startDate").value = "";
         document.getElementById("endDate").value = "";
 
-        loadRatings(); // Reload all data
+        loadRatings();
     }
 
     let barChart, pieChart;
 
     function renderCharts(data) {
-        // Cleanup old charts
+
         if (barChart) barChart.destroy();
         if (pieChart) pieChart.destroy();
 
-        // Group by category
+
         const categoryGroups = {};
         data.forEach(r => {
             if (!categoryGroups[r.category]) {
@@ -394,7 +392,7 @@
         const labels = Object.keys(categoryGroups);
         const avgRatings = labels.map(cat => (categoryGroups[cat].total / categoryGroups[cat].count).toFixed(2));
 
-        // Bar chart - Average ratings
+
         const barCtx = document.getElementById('barChart').getContext('2d');
         barChart = new Chart(barCtx, {
             type: 'bar',
@@ -403,7 +401,7 @@
                 datasets: [{
                     label: 'Average Rating',
                     data: avgRatings,
-                    backgroundColor: '#3b82f6'
+                    backgroundColor: ['#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa']
                 }]
             },
             options: {
@@ -412,19 +410,19 @@
                     legend: {
                         display: false,
                         labels: {
-                            color: '#fff' // Legend text color (if enabled)
+                            color: '#fff'
                         }
                     },
                     title: {
                         display: true,
                         text: 'Average Rating per Category',
                         font: {
-                            size: 24  // title font size in pixels
+                            size: 24
                         },
-                        color: '#fff' // Title color
+                        color: '#fff'
                     },
                     tooltip: {
-                        bodyColor: '#fff',  // Tooltip text color
+                        bodyColor: '#fff',
                         titleColor: '#fff'
                     }
                 },
@@ -432,30 +430,34 @@
                     y: {
                         beginAtZero: true,
                         max: 5,
+                        grid: {
+                            color: '#a2a1a1',
+                            borderColor: '#a2a1a1'
+                        },
                         ticks: {
-                            color: '#fff' // Y-axis numbers color
+                            color: '#fff'
                         },
                         title: {
                             display: true,
                             text: 'Rating',
-                            color: '#fff' // Y-axis title color
+                            color: '#fff'
                         }
                     },
                     x: {
                         ticks: {
-                            color: '#fff' // X-axis labels color
+                            color: '#fff'
                         },
                         title: {
                             display: true,
                             text: 'Category',
-                            color: '#fff' // X-axis title color
+                            color: '#fff'
                         }
                     }
                 }
             }
         });
 
-        // Pie chart - Rating count per category
+
         const pieCtx = document.getElementById('pieChart').getContext('2d');
         const counts = labels.map(cat => categoryGroups[cat].count);
         pieChart = new Chart(pieCtx, {
@@ -475,13 +477,13 @@
                         display: true,
                         text: 'Ratings Count per Category',
                         font: {
-                            size: 24  // title font size in pixels
+                            size: 24
                         },
-                        color: '#fff'  // Title color
+                        color: '#fff'
                     },
                     legend: {
                         labels: {
-                            color: '#fff' // Legend labels color
+                            color: '#fff'
                         }
                     },
                     tooltip: {
@@ -493,7 +495,7 @@
         });
     }
 
-    let lineChart; // Declare globally
+    let lineChart;
 
     function renderLineChart(data) {
         const dateMap = {};
@@ -518,7 +520,7 @@
             return avg.toFixed(2);
         });
 
-        // ✅ Destroy previous chart if exists
+
         if (lineChart) {
             lineChart.destroy();
         }
@@ -531,7 +533,7 @@
                 datasets: [{
                     label: 'Average Score',
                     data: averageScores,
-                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderColor: '#fff',
                     backgroundColor: 'rgba(59, 130, 246, 0.2)',
                     fill: true,
                     tension: 0.3,
@@ -544,16 +546,16 @@
                     legend: {
                         position: 'top',
                         labels: {
-                            color: '#fff'  // Legend text color
+                            color: '#fff'
                         }
                     },
                     title: {
                         display: true,
                         text: 'Ratings Over Time',
                         font: {
-                            size: 24  // title font size in pixels
+                            size: 24
                         },
-                        color: '#fff' // Title color
+                        color: '#fff'
                     },
                     tooltip: {
                         bodyColor: '#fff',
@@ -565,22 +567,22 @@
                         beginAtZero: true,
                         max: 5,
                         ticks: {
-                            color: '#fff' // Y axis tick color
+                            color: '#fff'
                         },
                         title: {
                             display: true,
                             text: 'Rating',
-                            color: '#fff' // Y axis title color
+                            color: '#fff'
                         }
                     },
                     x: {
                         ticks: {
-                            color: '#fff' // X axis tick color
+                            color: '#fff'
                         },
                         title: {
                             display: true,
                             text: 'Date',
-                            color: '#fff' // X axis title color
+                            color: '#fff'
                         }
                     }
                 }
