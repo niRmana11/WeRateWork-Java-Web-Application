@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>User Profile - WeRateWork</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
       margin: 0;
@@ -120,26 +121,27 @@
       color: #ef4444;
     }
 
-
-
-
-
-
-
     .back-link {
-      text-align: center;
-      margin: 40px 0;
+      display: flex;
+      justify-content: center;
+      margin: 30px 0;
     }
 
     .back-link a {
-      color: #3b82f6;
+      background: linear-gradient(to right bottom, #3b82f6, #10b981);
+      padding: 12px 24px;
+      border-radius: 10px;
+      color: #ffffff;
       font-weight: bold;
+      font-size: 14px;
       text-decoration: none;
-      transition: color 0.2s ease;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: background 0.3s ease, transform 0.2s ease;
     }
 
     .back-link a:hover {
-      color: #60a5fa;
+      background: linear-gradient(to right, #2563eb, #059669);
+      transform: translateY(-2px);
     }
 
     .edit-form select {
@@ -167,7 +169,7 @@
 <body>
 
 <div class="back-link">
-  <a href="dashboard.html">← Back to Dashboard</a>
+  <a href="dashboard.html"><i class="fa-solid fa-circle-left" style="margin-right: 10px"></i> Back to Dashboard</a>
 </div>
 
 <div class="profile-card">

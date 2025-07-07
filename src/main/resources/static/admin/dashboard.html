@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Admin Dashboard - Rating Summary</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         body {
@@ -23,7 +24,7 @@
         }
 
         .btn {
-            background: linear-gradient(to right, #3b82f6, #10b981);
+            background: linear-gradient(to right bottom, #3b82f6, #10b981);
             color: white;
             padding: 10px 20px;
             border: none;
@@ -52,7 +53,7 @@
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
-            background: linear-gradient(to right, #3b82f6, #10b981);
+            background: linear-gradient(to right bottom, #3b82f6, #10b981);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -103,28 +104,28 @@
 
         .charts {
             display: flex;
-            justify-content: space-between;
-            flex-wrap: nowrap;
+            justify-content: center;
+            width: 100%;
             gap: 20px;
             margin: 40px 0;
             max-height: 500px;
-        }
-
-        .barChart {
-            width: 100%;
-            max-width: 50%;
+            box-sizing: border-box;
 
         }
 
-        .pieChart {
-            width: 100%;
-            max-width: 50%;
+        canvas {
+            background: #111827;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
+            max-width: 100%;
 
         }
 
-        .lineChart {
-            width: 100%;
-            height: 300px;
+        @media (max-width: 768px) {
+            .charts {
+                grid-template-columns: 1fr;
+            }
         }
 
         .top-right {
@@ -133,7 +134,7 @@
         }
 
         .profile-btn {
-            background: linear-gradient(to right, #3b82f6, #10b981);
+            background: linear-gradient(to right bottom, #3b82f6, #10b981);
             padding: 10px 18px;
             border-radius: 8px;
             color: white;
@@ -144,7 +145,7 @@
         }
 
         .profile-btn:hover {
-            background: linear-gradient(to right, #2563eb, #059669);
+            background: linear-gradient(to right bottom, #2563eb, #059669);
             transform: scale(1.05);
         }
 
@@ -160,9 +161,9 @@
 <body>
 
 <div class="top-bar">
-    <a href="adminManage.html" class="btn">Manage</a>
+    <a href="adminManage.html" class="btn"><i class="fa-regular fa-pen-to-square" style="margin-right: 10px"></i>Manage</a>
     <h1>Category Rating Summary</h1>
-    <a href="adminProfile.html" class="profile-btn">👤 Profile</a>
+    <a href="adminProfile.html" class="profile-btn"><i class="fa-solid fa-user" style="margin-right: 10px"></i> Profile</a>
 </div>
 
 
@@ -408,11 +409,48 @@
             options: {
                 responsive: true,
                 plugins: {
-                    legend: { display: false },
-                    title: { display: true, text: 'Average Rating per Category' }
+                    legend: {
+                        display: false,
+                        labels: {
+                            color: '#fff' // Legend text color (if enabled)
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Average Rating per Category',
+                        font: {
+                            size: 24  // title font size in pixels
+                        },
+                        color: '#fff' // Title color
+                    },
+                    tooltip: {
+                        bodyColor: '#fff',  // Tooltip text color
+                        titleColor: '#fff'
+                    }
                 },
                 scales: {
-                    y: { beginAtZero: true, max: 5 }
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            color: '#fff' // Y-axis numbers color
+                        },
+                        title: {
+                            display: true,
+                            text: 'Rating',
+                            color: '#fff' // Y-axis title color
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#fff' // X-axis labels color
+                        },
+                        title: {
+                            display: true,
+                            text: 'Category',
+                            color: '#fff' // X-axis title color
+                        }
+                    }
                 }
             }
         });
@@ -433,7 +471,23 @@
             options: {
                 responsive: true,
                 plugins: {
-                    title: { display: true, text: 'Ratings Count per Category' }
+                    title: {
+                        display: true,
+                        text: 'Ratings Count per Category',
+                        font: {
+                            size: 24  // title font size in pixels
+                        },
+                        color: '#fff'  // Title color
+                    },
+                    legend: {
+                        labels: {
+                            color: '#fff' // Legend labels color
+                        }
+                    },
+                    tooltip: {
+                        bodyColor: '#fff',
+                        titleColor: '#fff'
+                    }
                 }
             }
         });
@@ -469,7 +523,6 @@
             lineChart.destroy();
         }
 
-        // ✅ Create new chart
         const ctx = document.getElementById('lineChart').getContext('2d');
         lineChart = new Chart(ctx, {
             type: 'line',
@@ -481,25 +534,54 @@
                     borderColor: 'rgba(59, 130, 246, 1)',
                     backgroundColor: 'rgba(59, 130, 246, 0.2)',
                     fill: true,
-                    tension: 0.3
+                    tension: 0.3,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 5
-                    }
-                },
                 plugins: {
                     legend: {
-                        position: 'top'
+                        position: 'top',
+                        labels: {
+                            color: '#fff'  // Legend text color
+                        }
                     },
                     title: {
                         display: true,
-                        text: 'Ratings Over Time'
+                        text: 'Ratings Over Time',
+                        font: {
+                            size: 24  // title font size in pixels
+                        },
+                        color: '#fff' // Title color
+                    },
+                    tooltip: {
+                        bodyColor: '#fff',
+                        titleColor: '#fff'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            color: '#fff' // Y axis tick color
+                        },
+                        title: {
+                            display: true,
+                            text: 'Rating',
+                            color: '#fff' // Y axis title color
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#fff' // X axis tick color
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date',
+                            color: '#fff' // X axis title color
+                        }
                     }
                 }
             }
