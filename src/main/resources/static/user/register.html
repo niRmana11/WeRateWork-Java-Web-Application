@@ -43,10 +43,28 @@
             font-size: 16px;
             background-color: #2c2c2c;
             color: #fff;
+
+        }
+
+        .registerForm select{
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20fill%3D%22%23f1f5f9%22%20height%3D%2212%22%20width%3D%2212%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M2%204l4%204%204-4z%22/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
         }
 
         input::placeholder {
             color: #aaa;
+        }
+
+        .error-message {
+            font-size: 14px;
+            color: #f87171;
+            margin-top: -8px;
+            margin-bottom: -8px;
         }
 
         button {
@@ -85,10 +103,18 @@
 <body>
 
 <h2>Register for WeRateWork</h2>
-<form id="registerForm">
+<form id="registerForm" class="registerForm">
     <input type="text" placeholder="Username" id="regUsername" required />
+    <p id="usernameError" class="error-message"></p>
+
     <input type="password" placeholder="Password" id="regPassword" required />
-    <select id="regRole"></select>
+    <p id="passwordError" class="error-message"></p>
+
+    <select id="regRole" class="regRole" required>
+        <option value="">Select Role</option>
+    </select>
+    <p id="roleError" class="error-message"></p>
+
     <button type="submit">Register</button>
 </form>
 
@@ -97,6 +123,7 @@
 </div>
 
 <script>
+    // Populate role options
     fetch("/roles")
         .then(res => res.json())
         .then(data => {
@@ -109,23 +136,80 @@
             });
         });
 
-    document.getElementById("registerForm").addEventListener("submit", function (e) {
+    const regForm = document.getElementById("registerForm");
+    const username = document.getElementById("regUsername");
+    const password = document.getElementById("regPassword");
+    const role = document.getElementById("regRole");
+
+    const usernameError = document.getElementById("usernameError");
+    const passwordError = document.getElementById("passwordError");
+    const roleError = document.getElementById("roleError");
+
+    function validateUsername(value) {
+        const trimmed = value.trim();
+        if (trimmed.length < 5 || trimmed.length > 20) {
+            return "Username must be 5–20 characters.";
+        }
+        if (!/^[a-zA-Z0-9_]+$/.test(trimmed)) {
+            return "Username can only contain letters, numbers, and underscores.";
+        }
+        return "";
+    }
+
+    function validatePassword(value) {
+        if (value.length < 8) {
+            return "Password must be at least 8 characters.";
+        }
+        if (!/[a-zA-Z]/.test(value) || !/[0-9]/.test(value)) {
+            return "Password must contain both letters and numbers.";
+        }
+        return "";
+    }
+
+    function validateRole(value) {
+        if (!value) return "Please select a role.";
+        return "";
+    }
+
+    regForm.addEventListener("submit", function (e) {
         e.preventDefault();
+
+        // Clear previous messages
+        usernameError.textContent = "";
+        passwordError.textContent = "";
+        roleError.textContent = "";
+
+        const userVal = username.value;
+        const passVal = password.value;
+        const roleVal = role.value;
+
+        const userMsg = validateUsername(userVal);
+        const passMsg = validatePassword(passVal);
+        const roleMsg = validateRole(roleVal);
+
+        if (userMsg || passMsg || roleMsg) {
+            if (userMsg) usernameError.textContent = userMsg;
+            if (passMsg) passwordError.textContent = passMsg;
+            if (roleMsg) roleError.textContent = roleMsg;
+            return;
+        }
+
+        // Send valid data to server
         fetch("/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                username: regUsername.value,
-                password: regPassword.value,
-                roleId: regRole.value,
+                username: userVal.trim(),
+                password: passVal,
+                roleId: roleVal,
             }),
         })
             .then(res => {
                 if (res.ok) {
-                    alert("Registered! Now login.");
+                    alert("✅ Registered! Now login.");
                     window.location.href = "login.html";
                 } else {
-                    res.text().then(msg => alert(msg));
+                    res.text().then(msg => alert("❌ " + msg));
                 }
             });
     });

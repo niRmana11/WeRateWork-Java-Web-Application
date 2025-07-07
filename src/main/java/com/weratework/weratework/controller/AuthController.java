@@ -92,17 +92,33 @@ public class AuthController {
         User user = (User) userObj;
         String newUsername = payload.get("username");
         String newPassword = payload.get("password");
+        String newRoleId = payload.get("role");  // ✅ fixed key
 
         if (newUsername != null && !newUsername.isBlank()) {
             user.setUsername(newUsername);
         }
         if (newPassword != null && !newPassword.isBlank()) {
-            user.setPassword(newPassword); // Make sure to hash this
+            user.setPassword(newPassword); // NOTE: hash this in real apps
         }
 
-        userRepo.save(user); // Save updated user
+        // ✅ Update role from database
+        if (newRoleId != null && !newRoleId.isBlank()) {
+            try {
+                int roleId = Integer.parseInt(newRoleId);
+                roleRepo.findById(roleId).ifPresent(user::setRole);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.badRequest().body("Invalid role ID format");
+            }
+        }
+
+        userRepo.save(user);
+
+        // ✅ Update session user
+        session.setAttribute("user", user);
+
         return ResponseEntity.ok("Profile updated");
     }
+
 
 
 

@@ -167,8 +167,8 @@
 <div class="container">
   <h1>Manage Categories</h1>
   <form id="categoryForm">
-    <input type="text" id="categoryName" placeholder="New Category Name" required />
-    <input type="text" id="categoryDesc" placeholder="Description" required />
+    <input type="text" id="categoryName" placeholder="New Category Name" required minlength="5" maxlength="30" pattern="[A-Za-z0-9 ]+"/>
+    <input type="text" id="categoryDesc" placeholder="Description" required minlength="10" maxlength="100"/>
     <button type="submit">Add Category</button>
   </form>
   <p id="categoryFormMessage" class="text-sm"></p>
@@ -190,7 +190,7 @@
 <div class="container">
   <h1>Manage Roles</h1>
   <form id="roleForm">
-    <input type="text" id="roleName" placeholder="New Role Name" required />
+    <input type="text" id="roleName" placeholder="New Role Name" required minlength="5" maxlength="30" pattern="[A-Za-z0-9 ]+"/>
     <button type="submit">Add Role</button>
   </form>
   <p id="roleFormMessage" class="text-sm"></p>
@@ -239,6 +239,53 @@
 
   let currentCategoryId = null;
   let currentRoleId = null;
+
+  function isValidText(text, min, max) {
+    return text.trim().length >= min && text.trim().length <= max;
+  }
+
+  function validateCategoryForm() {
+    const name = catNameInput.value.trim();
+    const desc = categoryDesc.value.trim();
+
+    if (!isValidText(name, 5, 30)) {
+      catMsg.textContent = "Category name must be between 5 and 30 characters.";
+      catMsg.className = "text-sm text-red";
+      catForm.querySelector("button").disabled = true;
+      return;
+    }
+
+    if (!isValidText(desc, 10, 100)) {
+      catMsg.textContent = "Description must be between 10 and 100 characters.";
+      catMsg.className = "text-sm text-red";
+      catForm.querySelector("button").disabled = true;
+      return;
+    }
+
+    catMsg.textContent = "";
+    catForm.querySelector("button").disabled = false;
+
+  }
+
+
+  function validateRoleForm() {
+
+    const role = roleNameInput.value.trim();
+
+    if (!isValidText(role, 5, 30)) {
+      roleMsg.textContent = "Description must be between 5 and 30 characters.";
+      roleMsg.className = "text-sm text-red";
+      roleForm.querySelector("button").disabled = true;
+      return;
+    }
+
+    roleMsg.textContent = "";
+    roleForm.querySelector("button").disabled = false;
+  }
+
+  catNameInput.addEventListener("input", validateCategoryForm);
+  categoryDesc.addEventListener("input", validateCategoryForm);
+  roleNameInput.addEventListener("input", validateRoleForm);
 
   function escapeHtml(text) {
     return text.replace(/'/g, "\\'");
@@ -425,6 +472,7 @@
   window.onload = function () {
     loadCategories();
     loadRoles();
+
   };
 </script>
 </body>

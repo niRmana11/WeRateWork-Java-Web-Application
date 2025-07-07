@@ -226,6 +226,24 @@
             display: flex;
             justify-content: flex-end;
         }
+
+        .edit-form select {
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            background-color: #2d2d2d;
+            color: #f1f5f9;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20fill%3D%22%23f1f5f9%22%20height%3D%2212%22%20width%3D%2212%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M2%204l4%204%204-4z%22/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+        }
+
     </style>
 </head>
 <body>
@@ -254,6 +272,9 @@
     <form id="editForm" class="edit-form">
         <input type="text" id="newUsername" placeholder="New Username" required />
         <input type="password" id="newPassword" placeholder="New Password" required />
+        <select id="newRole" required>
+            <option value="">Select Role</option>
+        </select>
         <button type="submit" class="btn save-btn">Save Changes</button>
     </form>
 
@@ -278,6 +299,18 @@
     // Store editing state to track which rating is currently being edited
     let editingRatingId = null;
 
+    fetch("/roles")
+        .then(res => res.json())
+        .then(data => {
+            const dropdown = document.getElementById("newRole");
+            data.forEach(role => {
+                const opt = document.createElement("option");
+                opt.value = role.id;
+                opt.textContent = role.role;
+                dropdown.appendChild(opt);
+            });
+        });
+
     function loadUserDetails() {
         fetch("/auth/me")
             .then(res => {
@@ -288,6 +321,8 @@
                 usernameEl.textContent = user.username;
                 roleEl.textContent = user.role.role;
                 document.getElementById("newUsername").value = user.username;
+                document.getElementById("newPassword").value = user.password;
+
                 fetchUserRatings();
             })
             .catch(() => {
@@ -304,16 +339,35 @@
         e.preventDefault();
         const newUsername = document.getElementById("newUsername").value;
         const newPassword = document.getElementById("newPassword").value;
+        const newRole = document.getElementById("newRole").value;
+
+        if (newUsername.length < 3) {
+            msgEl.textContent = "❌ Username must be at least 3 characters long.";
+            msgEl.className = "message text-red";
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            msgEl.textContent = "❌ Password must be at least 6 characters long.";
+            msgEl.className = "message text-red";
+            return;
+        }
+
+        if (!newRole || newRole === "") {
+            msgEl.textContent = "❌ Please select a role.";
+            msgEl.className = "message text-red";
+            return;
+        }
 
         fetch("/auth/update", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: newUsername, password: newPassword })
+            body: JSON.stringify({ username: newUsername, password: newPassword, role: newRole })
         })
             .then(res => {
-                if (!res.ok) throw new Error("Failed to update profile");
-                return res.json();
-            })
+            if (!res.ok) return res.text().then(msg => { throw new Error(msg); });
+            return res.text(); // Accept plain text response
+        })
             .then(() => {
                 msgEl.textContent = "✅ Profile updated successfully!";
                 msgEl.className = "message text-green";
@@ -324,6 +378,7 @@
                 msgEl.textContent = "❌ " + err.message;
                 msgEl.className = "message text-red";
             });
+
     });
 
     function logout() {
