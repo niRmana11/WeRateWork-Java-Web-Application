@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Submit Rating - WeRateWork</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         body {
             margin: 0;
@@ -33,7 +36,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 24px;
+            gap: 40px;
         }
 
         .card {
@@ -166,7 +169,7 @@
         }
 
         .profile-btn {
-            background: linear-gradient(to right, #3b82f6, #10b981);
+            background: linear-gradient(to right bottom, #3b82f6, #10b981);
             padding: 10px 18px;
             border-radius: 8px;
             color: white;
@@ -177,20 +180,54 @@
         }
 
         .profile-btn:hover {
-            background: linear-gradient(to right, #2563eb, #059669);
+            background: linear-gradient(to right bottom, #2563eb, #059669);
             transform: scale(1.05);
         }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .highlight {
+            font-style: italic;
+            background: linear-gradient(to right, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer {
+
+
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+            margin-top: 50px;
+        }
+
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="top-right">
-        <a href="profile.html" class="profile-btn">👤 Profile</a>
+    <div class="top-bar">
+        <h1 class="logo">We<span class="highlight">Rate</span>Work</h1>
+        <div class="top-right">
+            <a href="profile.html" class="profile-btn"><i class="fa-solid fa-user" style="margin-right: 10px"></i>Profile</a>
+        </div>
     </div>
+
 
     <h2>Rate Your Experience</h2>
     <div id="categoryGrid"></div>
+
+
+</div>
+
+<div class="footer">
+    &copy; 2025 WeRateWork. Built for real feedback.
 </div>
 
 <script>
@@ -217,12 +254,11 @@
 
 
 const gradientColors = [
-        "linear-gradient(to right bottom, #ff5f6d, #ffc371)",
-        "linear-gradient(to right bottom, #4facfe, #00f2fe)",
-        "linear-gradient(to right bottom, #43e97b, #38f9d7)",
-        "linear-gradient(to right bottom, #a18cd1, #fbc2eb)",
-        "linear-gradient(to right bottom, #fce38a, #f38181)"
-    ];
+    "linear-gradient(to right bottom, #1e3a8a, #1e40af)",
+    "linear-gradient(to right bottom, #0f766e, #0e7490)"
+
+
+];
 
     let activeCard = null;
     let activeCategory = null;
