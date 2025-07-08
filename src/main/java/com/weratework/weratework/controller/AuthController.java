@@ -92,16 +92,16 @@ public class AuthController {
         User user = (User) userObj;
         String newUsername = payload.get("username");
         String newPassword = payload.get("password");
-        String newRoleId = payload.get("role");  // ✅ fixed key
+        String newRoleId = payload.get("role");
 
         if (newUsername != null && !newUsername.isBlank()) {
             user.setUsername(newUsername);
         }
         if (newPassword != null && !newPassword.isBlank()) {
-            user.setPassword(newPassword); // NOTE: hash this in real apps
+            user.setPassword(newPassword);
         }
 
-        // ✅ Update role from database
+
         if (newRoleId != null && !newRoleId.isBlank()) {
             try {
                 int roleId = Integer.parseInt(newRoleId);
@@ -113,7 +113,7 @@ public class AuthController {
 
         userRepo.save(user);
 
-        // ✅ Update session user
+
         session.setAttribute("user", user);
 
         return ResponseEntity.ok("Profile updated");

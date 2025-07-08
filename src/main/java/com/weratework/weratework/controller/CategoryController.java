@@ -28,11 +28,13 @@ public class CategoryController {
         return categoryRepository.save(category);
     }
 
+    // delete a category
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) {
         categoryRepository.deleteById(id);
     }
 
+    // edit a category
     @PutMapping("/{id}")
     public Category updateCategory(@PathVariable int id, @RequestBody Category updated) {
         Category cat = categoryRepository.findById(id).orElseThrow();

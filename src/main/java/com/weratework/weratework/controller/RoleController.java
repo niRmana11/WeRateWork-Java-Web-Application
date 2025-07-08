@@ -28,11 +28,13 @@ public class RoleController {
         return roleRepository.save(role);
     }
 
+    // delete a role
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) {
         roleRepository.deleteById(id);
     }
 
+    // edit a role
     @PutMapping("/{id}")
     public Role updateRole(@PathVariable int id, @RequestBody Role updated) {
         Role role = roleRepository.findById(id).orElseThrow();

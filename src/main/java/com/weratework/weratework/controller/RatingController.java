@@ -56,7 +56,7 @@ public class RatingController {
 
         rating.setCategory(category);
         rating.setRole(role);
-        rating.setUser(user); // ✅ Set user from session
+        rating.setUser(user);
 
         return ratingRepository.save(rating);
     }

@@ -30,7 +30,7 @@ public class Rating {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Getters & Setters
+
     public int getId() {
         return id;
     }
