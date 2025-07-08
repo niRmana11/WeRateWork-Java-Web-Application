@@ -133,8 +133,8 @@
             background-color: #1f1f1f;
             border-radius: 12px;
             padding: 20px;
-            width: 280px; /* ensures uniform card width */
-            min-height: 280px; /* ensures consistent height even when form is visible */
+            width: 280px;
+            min-height: 280px;
             box-shadow: 0 4px 14px rgba(59, 130, 246, 0.2);
             position: relative;
             display: flex;
@@ -201,7 +201,6 @@
         }
 
 
-        /* Emoji selector container */
         .emoji-selector {
             display: flex;
             justify-content: center;
@@ -227,7 +226,7 @@
             opacity: 1;
         }
 
-        /* Edit form inside rating card */
+
         .edit-rating-form {
             display: flex;
             flex-direction: column;
@@ -322,10 +321,8 @@
     const editForm = document.getElementById("editForm");
     const ratingsContainer = document.getElementById("ratingsContainer");
 
-    // Emoji map for score to emoji
     const emojiMap = ["", "😡", "😕", "😐", "🙂", "🤩"];
 
-    // Store editing state to track which rating is currently being edited
     let editingRatingId = null;
 
     fetch("/roles")
@@ -431,18 +428,18 @@
                     card.className = "rating-card";
                     card.dataset.ratingId = rating.id;
 
-                    // If this rating is being edited, show edit form, else show display
+
                     if (editingRatingId === rating.id) {
                         card.innerHTML = getEditFormHtml(rating);
                         attachEditFormHandlers(card, rating);
                     } else {
                         card.innerHTML = getDisplayHtml(rating);
-                        // Add event listener for edit button
+
                         card.querySelector(".edit-btn").onclick = () => {
                             editingRatingId = rating.id;
                             fetchUserRatings();
                         };
-                        // Add event listener for delete button
+
                         card.querySelector(".logout-btn").onclick = () => deleteRating(rating.id);
                     }
 
@@ -500,13 +497,13 @@
         const textarea = form.querySelector(".edit-rating-comment");
         let selectedScore = rating.score;
 
-        // Emoji click handlers
+
         emojis.forEach(span => {
             span.addEventListener("click", () => {
                 selectedScore = parseInt(span.dataset.value);
                 updateEmojiSelection();
             });
-            // Keyboard accessible selection
+
             span.addEventListener("keydown", (e) => {
                 if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
@@ -530,10 +527,10 @@
             });
         }
 
-        // Initial selection highlight
+
         updateEmojiSelection();
 
-        // Save handler
+
         form.addEventListener("submit", (e) => {
             e.preventDefault();
             if (!selectedScore || selectedScore < 1 || selectedScore > 5) {
@@ -555,7 +552,7 @@
                 .catch(err => alert(err.message));
         }, { once: true });
 
-        // Cancel handler
+
         form.querySelector(".cancel-btn").onclick = () => {
             editingRatingId = null;
             fetchUserRatings();

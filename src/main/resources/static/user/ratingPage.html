@@ -109,10 +109,6 @@
             box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
         }
 
-
-
-
-
         .submit-btn {
             background: linear-gradient(to right, #10b981, #059669);
             color: white;
@@ -159,8 +155,6 @@
             margin-top: 8px;
             border: none;
         }
-
-
 
         .text-green {
             color: #22c55e;
@@ -230,10 +224,8 @@
         </div>
     </div>
 
-
     <h2>Rate Your Experience</h2>
     <div id="categoryGrid"></div>
-
 
 </div>
 
@@ -244,11 +236,11 @@
 <script>
 
 
-        // Check if user is logged in
+
         fetch("/auth/me")
         .then(res => {
         if (!res.ok) {
-        // Redirect to login if not authenticated
+
         window.location.href = "login.html";
     }
         return res.json();
@@ -257,7 +249,7 @@
         console.log("Logged in as:", user.username); // Optional
     })
         .catch(err => {
-        // In case of network error or server issue
+
         console.error("Error checking auth:", err);
         window.location.href = "login.html";
     });
