@@ -70,7 +70,7 @@
             font-size: 14px;
             color: #e5e7eb;
             font-weight: 500;
-            margin-bottom: 16px;
+            margin: 50px 0;
         }
 
         .rate-btn,
@@ -85,21 +85,32 @@
         }
 
         .rate-btn {
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid #ffffff33;
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.92), rgba(42, 42, 42, 0.65)); /* Neutral dark base */
+            color: #ffffff;
+            padding: 10px 20px;
+            border: 1px solid #3f3f3f;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(4px);
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         .rate-btn:hover {
-            background: rgba(0, 0, 0, 0.5);
-            border-color: #ffffff55;
+            background: linear-gradient(135deg, rgb(30, 30, 30), rgb(42, 42, 42)); /* violet to purple */
+            border-color: #10b981;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(16, 185, 129, 0.4);
         }
+
+        .rate-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+        }
+
+
+
 
 
         .submit-btn {
@@ -199,8 +210,6 @@
         }
 
         .footer {
-
-
             font-size: 12px;
             color: #555;
             text-align: center;
