@@ -186,7 +186,7 @@
 <div class="container">
   <h1>Manage Categories</h1>
   <form id="categoryForm">
-    <input type="text" id="categoryName" placeholder="New Category Name" required minlength="5" maxlength="30" pattern="[A-Za-z0-9 &]+"/>
+    <input type="text" id="categoryName" placeholder="New Category Name" required minlength="5" maxlength="50" pattern="[A-Za-z0-9 & -]+"/>
     <input type="text" id="categoryDesc" placeholder="Description" required minlength="10" maxlength="100"/>
     <button type="submit">Add Category</button>
   </form>
@@ -209,7 +209,7 @@
 <div class="container">
   <h1>Manage Roles</h1>
   <form id="roleForm">
-    <input type="text" id="roleName" placeholder="New Role Name" required minlength="5" maxlength="30" pattern="[A-Za-z0-9 /]+"/>
+    <input type="text" id="roleName" placeholder="New Role Name" required minlength="5" maxlength="50" pattern="[A-Za-z0-9 /]+"/>
     <button type="submit">Add Role</button>
   </form>
   <p id="roleFormMessage" class="text-sm"></p>
@@ -272,8 +272,8 @@
     const name = catNameInput.value.trim();
     const desc = categoryDesc.value.trim();
 
-    if (!isValidText(name, 5, 30)) {
-      catMsg.textContent = "Category name must be between 5 and 30 characters.";
+    if (!isValidText(name, 5, 50)) {
+      catMsg.textContent = "Category name must be between 5 and 50 characters.";
       catMsg.className = "text-sm text-red";
       catForm.querySelector("button").disabled = true;
       return;
@@ -296,8 +296,8 @@
 
     const role = roleNameInput.value.trim();
 
-    if (!isValidText(role, 5, 30)) {
-      roleMsg.textContent = "Description must be between 5 and 30 characters.";
+    if (!isValidText(role, 5, 50)) {
+      roleMsg.textContent = "Description must be between 5 and 50 characters.";
       roleMsg.className = "text-sm text-red";
       roleForm.querySelector("button").disabled = true;
       return;
