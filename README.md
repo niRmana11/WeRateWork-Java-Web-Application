@@ -82,5 +82,39 @@ Employees can anonymously rate their workplace experience, while administrators 
 
 ---
 
+### User Interfaces
+
+## Home Page
+![home](https://github.com/user-attachments/assets/bff4e51c-136a-4803-8fda-3818a7c27f86)
+
+## Login Page
+![login](https://github.com/user-attachments/assets/006c6e13-a7bf-42eb-8487-03358a89b849)
+
+## Register Page
+![register](https://github.com/user-attachments/assets/619450b4-380e-405d-b5c7-69c77c491f24)
+
+## Rating Page (User)
+![ratingPage](https://github.com/user-attachments/assets/c8f732ab-9ab9-4477-af91-0a66697992ee)
+
+## Profile (User)
+![userProfile](https://github.com/user-attachments/assets/4681a84c-a898-455a-8c4d-f5db63150d78)
+
+## Dashboard (Admin)
+![adminDashboard](https://github.com/user-attachments/assets/fcd64256-4148-4d8a-b986-6de931eee8f6)
+
+## Manage Page (Admin)
+![manage](https://github.com/user-attachments/assets/07ec4a70-968c-468c-b069-e3cb344d2426)
+
+## Profile (Admin)
+![adminProfile](https://github.com/user-attachments/assets/1b8427e8-8786-4e7c-b2b3-4e0e4d3aa3a4)
+
+
+
+
+
+
+
+
+
 
 
