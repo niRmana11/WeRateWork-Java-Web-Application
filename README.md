@@ -108,6 +108,133 @@ Employees can anonymously rate their workplace experience, while administrators 
 ### Profile (Admin)
 ![adminProfile](https://github.com/user-attachments/assets/1b8427e8-8786-4e7c-b2b3-4e0e4d3aa3a4)
 
+---
+
+## 📂 Project Structure
+
+BackEnd
+       ├── controller
+       │   ├── AdminController.java
+       │   ├── AuthController.java
+       │   ├── CategoryController.java
+       │   ├── ProfileController.java
+       │   ├── RatingController.java
+       │   └── RoleController.java
+       │
+       ├── dto
+       │   └── CategoryRatingSummary.java
+       │
+       ├── model
+       │   ├── Category.java
+       │   ├── Rating.java
+       │   ├── Role.java
+       │   └── User.java
+       │
+       └── repository
+           ├── CategoryRepository.java
+           ├── RatingRepository.java
+           ├── RoleRepository.java
+           └── UserRepository.java
+
+FrontEnd
+   ├── admin
+   │   ├── adminManage.html
+   │   ├── adminProfile.html
+   │   └── dashboard.html
+   │
+   └── user
+       ├── home.html
+       ├── login.html
+       ├── profile.html
+       ├── ratingPage.html
+       └── register.html
+
+
+---
+
+## 🔗 API Endpoints
+
+### 🔐 Authentication
+
+| Method | Endpoint         | Description             |
+|--------|------------------|-------------------------|
+| POST   | `/auth/login`    | Login user              |
+| POST   | `/auth/register` | Register new user       |
+| GET    | `/auth/me`       | Get logged-in user info |
+| GET    | `/auth/logout`   | Logout current user     |
+
+---
+
+### 👥 User Profile
+
+| Method | Endpoint             | Description         |
+|--------|----------------------|---------------------|
+| GET    | `/profile`           | Get user profile    |
+| PUT    | `/profile/update`    | Update user profile |
+
+---
+
+### 🗳️ Ratings
+
+| Method | Endpoint         | Description              |
+|--------|------------------|--------------------------|
+| GET    | `/ratings`       | Get all ratings          |
+| POST   | `/ratings`       | Submit a new rating      |
+| PUT    | `/ratings/{id}`  | Update an existing rating|
+| DELETE | `/ratings/{id}`  | Delete a rating          |
+
+---
+
+### 🗂️ Categories
+
+| Method | Endpoint              | Description                 |
+|--------|-----------------------|-----------------------------|
+| GET    | `/categories`         | Get all categories          |
+| POST   | `/categories`         | Add new category (Admin)    |
+| DELETE | `/categories/{id}`    | Delete category (Admin)     |
+
+---
+
+### 🧑‍💼 Roles
+
+| Method | Endpoint           | Description              |
+|--------|--------------------|--------------------------|
+| GET    | `/roles`           | Get all roles            |
+| POST   | `/roles`           | Add new role (Admin)     |
+| DELETE | `/roles/{id}`      | Delete role (Admin)      |
+
+---
+
+### 📊 Admin - Rating Summary
+
+| Method | Endpoint                   | Description                        |
+|--------|----------------------------|------------------------------------|
+| GET    | `/admin/ratings-summary`   | Get all ratings with filters       |
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to fork this repo and submit a pull request.
+
+---
+
+## 📃 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+## 📬 Contact
+
+Have questions or suggestions? Reach out via GitHub Issues or message me directly.
+
+---
+
+
+
+       
+
 
 
 
