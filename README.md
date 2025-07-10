@@ -112,7 +112,41 @@ Employees can anonymously rate their workplace experience, while administrators 
 
 ## 📂 Project Structure
 
-<pre> ```text BackEnd ├── controller │ ├── AdminController.java │ ├── AuthController.java │ ├── CategoryController.java │ ├── ProfileController.java │ ├── RatingController.java │ └── RoleController.java ├── dto │ └── CategoryRatingSummary.java ├── model │ ├── Category.java │ ├── Rating.java │ ├── Role.java │ └── User.java └── repository ├── CategoryRepository.java ├── RatingRepository.java ├── RoleRepository.java └── UserRepository.java FrontEnd ├── admin │ ├── adminManage.html │ ├── adminProfile.html │ └── dashboard.html └── user ├── home.html ├── login.html ├── profile.html ├── ratingPage.html └── register.html ``` </pre>
+```text
+BackEnd
+├── controller
+│   ├── AdminController.java
+│   ├── AuthController.java
+│   ├── CategoryController.java
+│   ├── ProfileController.java
+│   ├── RatingController.java
+│   └── RoleController.java
+├── dto
+│   └── CategoryRatingSummary.java
+├── model
+│   ├── Category.java
+│   ├── Rating.java
+│   ├── Role.java
+│   └── User.java
+└── repository
+    ├── CategoryRepository.java
+    ├── RatingRepository.java
+    ├── RoleRepository.java
+    └── UserRepository.java
+
+FrontEnd
+├── admin
+│   ├── adminManage.html
+│   ├── adminProfile.html
+│   └── dashboard.html
+└── user
+    ├── home.html
+    ├── login.html
+    ├── profile.html
+    ├── ratingPage.html
+    └── register.html
+```
+
 
 ---
 
